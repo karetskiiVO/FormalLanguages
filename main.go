@@ -9,8 +9,14 @@ func main() {
 	fmt.Println(fl.Test(
 		[]fl.Token{
 			{Symb: 'a', Servicable: false},
-			{Symb: 'a', Servicable: false},
-			{Symb: '+', Servicable: false},
+			{Symb: '+', Servicable: true},
+			{Symb: '(', Servicable: true},
+			{Symb: '(', Servicable: true},
+				{Symb: 'a', Servicable: false},
+				{Symb: 'a', Servicable: false},
+			{Symb: ')', Servicable: true},
+			{Symb: '*', Servicable: true},
+			{Symb: ')', Servicable: true},
 		},
 	))
 }

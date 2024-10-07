@@ -19,7 +19,7 @@ func (reg RegExp) ToString() string {
 
 // RegExpFromTokens - construct regular expression from string
 func RegExpFromTokens(tokens []Token) (*RegExp, error) {
-	dict := make(map[rune]struct{})
+	dict := make(map[rune]struct{})	
 
 	for _, token := range tokens {
 		if !token.Servicable {
@@ -44,6 +44,9 @@ func RegExpFromTokensWithDict(tokens []Token, abc map[rune]struct{}) (*RegExp, e
 
 // Test - for test
 func Test(tokens []Token) string {
-	expr, _ := RegExpFromTokens(tokens)
+	expr, err := RegExpFromTokens(tokens)
+	if err != nil {
+		panic(err)
+	}
 	return expr.ToString()
 }

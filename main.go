@@ -3,8 +3,9 @@ package main
 import (
 	"bufio"
 	"fmt"
-	fl "formallang"
 	"os"
+	
+	fl "github.com/karetskiiVO/FormalLanguages/formallang"
 )
 
 func main() {

@@ -8,18 +8,23 @@ type RegExp struct {
 
 // Token - basic struct that string must be sliced
 type Token struct {
-	Symb          rune
+	Symb       rune
 	Servicable bool
 }
 
-// ToString - convert to 
+// ToString - convert to
 func (reg RegExp) ToString() string {
 	return reg.tree.ToString(lowPriority)
 }
 
-// RegExpFromTokens - construct regular expression from string
+// Optimize - creates new optimized RegExp 
+func (reg RegExp) Optimize() *RegExp {
+	panic("implement me")
+}
+
+// RegExpFromTokens - construct regular expression from token slice
 func RegExpFromTokens(tokens []Token) (*RegExp, error) {
-	dict := make(map[rune]struct{})	
+	dict := make(map[rune]struct{})
 
 	for _, token := range tokens {
 		if !token.Servicable {
@@ -35,7 +40,7 @@ func RegExpFromTokensWithDict(tokens []Token, abc map[rune]struct{}) (*RegExp, e
 	regexpnode, err := createRegExpNodes(tokens)
 
 	res := &RegExp{
-		abc: abc,
+		abc:  abc,
 		tree: regexpnode,
 	}
 

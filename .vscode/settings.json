@@ -1,0 +1,6 @@
+{
+    "go.toolsEnvVars": {
+        "CC": "cl",
+        "CXX": "cl"
+    }
+}

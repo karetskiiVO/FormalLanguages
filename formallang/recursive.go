@@ -2,6 +2,7 @@ package formallang
 
 import (
 	"fmt"
+	//"reflect"
 )
 
 func createRegExpNodes(tokens []Token) (regExpNode, error) {
@@ -27,11 +28,11 @@ func recursiveGetRune(tokens []Token, idx *int) (regExpNode, error) {
 	var res regExpNode
 	content := tokens[*idx]
 	if content.Servicable {
-		if content.Symb != 1 {
+		if content.Symb != '1' {
 			return nil, fmt.Errorf("can't parse on index %v", *idx)
-		} else {
-			res = regExpNodeEmptyRune{}
 		}
+
+		res = regExpNodeEmptyRune{}
 	} else {
 		res = regExpNodeRune{content.Symb}
 	}
@@ -96,7 +97,8 @@ loop:
 			break
 		}
 
-		ptr := &res
+		nodes := make([]regExpNode, 1)
+		nodes[0] = res
 
 		for *idx < len(tokens) && tokens[*idx].Symb == '+' {
 			(*idx)++
@@ -105,12 +107,14 @@ loop:
 				break loop
 			}
 
-			newnode := regExpNodeAdd{*ptr, buf}
-			*ptr = newnode
-			ptr = &newnode.Next1
+			nodes = append(nodes, buf)
 		}
 
-		return res, nil
+		if len(nodes) > 1 {
+			return regExpNodeAdd{nodes}, nil	
+		}
+
+		return nodes[0], nil
 	}
 
 	*idx = start
@@ -128,21 +132,24 @@ func recursiveGetMul(tokens []Token, idx *int) (regExpNode, error) {
 		if err != nil {
 			break
 		}
-
-		ptr := &res
+		
+		nodes := make([]regExpNode, 1)
+		nodes[0] = res
 
 		for {
 			buf, err := recursiveGetBrasClini(tokens, idx)
 			if err != nil {
 				break
 			}
-
-			newnode := regExpNodeMul{*ptr, buf}
-			*ptr = newnode
-			ptr = &newnode.Next1
+			
+			nodes = append(nodes, buf)
 		}
 
-		return res, nil
+		if len(nodes) > 1 {
+			return regExpNodeMul{nodes}, nil	
+		}
+
+		return nodes[0], nil
 	}
 
 	*idx = start

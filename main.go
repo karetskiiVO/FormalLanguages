@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	
 	fl "github.com/karetskiiVO/FormalLanguages/formallang"
@@ -13,8 +12,6 @@ func main() {
 
 	reg, _ := fl.RegExpFromTokens(testConvert(str))
 	fl.NFAFromRegExp(reg).Dump("./result.png")
-
-	fmt.Println("aboba")
 }
 
 func testConvert (str string) []fl.Token {

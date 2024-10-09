@@ -27,11 +27,14 @@ type nfanode struct {
 
 // NFAFromRegExp - constructs new NFA with given regular expression
 func NFAFromRegExp(reg *RegExp) *NFA {
-	var res NFA
+	res := &NFA{}
 
 	res.abc = maps.Clone(reg.abc)
+	begin, end := res.newNode(), res.newNode()
 
-	return &res
+	reg.tree.ToSubNFA(res, begin, end)
+
+	return res
 }
 
 func (nfa *NFA) newNode() *nfanode {
@@ -46,8 +49,9 @@ func (nfa *NFA) newNode() *nfanode {
 
 // Dump - dumps NFA into png
 func (nfa NFA) Dump(filename string) {
+
 	g := graphviz.New()
-	graph, err := g.Graph()
+	graph, err := g.Graph(graphviz.StrictDirected)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,7 +61,6 @@ func (nfa NFA) Dump(filename string) {
 		}
 		g.Close()
 	}()
-	
 
 	fromNFAtoGRAF := make(map[*nfanode]*cgraph.Node)
 	fromGRAFtoNFA := make(map[*cgraph.Node]*nfanode)
@@ -71,16 +74,28 @@ func (nfa NFA) Dump(filename string) {
 		}
 	}
 
+	buf := make(map[struct{from, to *nfanode}]([]rune))
+
 	for _, from := range nfa.nodes {
 		for r, links := range from.next {
 			for _, to := range links {
-				edge, err := graph.CreateEdge(fmt.Sprintf("%p_%p", fromNFAtoGRAF[from], fromNFAtoGRAF[to]), fromNFAtoGRAF[from], fromNFAtoGRAF[to])
-				edge.SetLabel(fmt.Sprintf("%c", r))
-
-				if err != nil {
-					log.Fatal(err)
-				}
+				buf[struct{from, to *nfanode}{from, to}] = append(buf[struct{ from, to *nfanode }{from, to}], r)
 			}
+		}
+	}
+
+	for pair, runes := range buf {
+		edge, err := graph.CreateEdge(fmt.Sprintf("%p_%p", fromNFAtoGRAF[pair.from], fromNFAtoGRAF[pair.to]), fromNFAtoGRAF[pair.from], fromNFAtoGRAF[pair.to])
+		
+		lable := fmt.Sprintf("%c", runes[0])
+		for _, r := range runes[1:] {
+			lable = fmt.Sprintf("%s,%c", lable, r)
+		}
+
+		edge.SetLabel(lable)
+
+		if err != nil {
+			log.Fatal(err)
 		}
 	}
 

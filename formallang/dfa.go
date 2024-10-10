@@ -12,7 +12,7 @@ import (
 	"github.com/goccy/go-graphviz/cgraph"
 )
 
-// DFA - imlement deterministic finite automaton with one letter transition
+// DFA - imlement deterministic finite automaton
 type DFA struct {
 	abc   map[rune]struct{}
 	nodes map[*dfanode]struct{}
@@ -27,7 +27,7 @@ type dfanode struct {
 
 func (from *dfanode) link(r rune, to *dfanode) *dfanode {
 	from.next[r] = to
-	
+
 	if from != to {
 		to.linkscnt++
 	}
@@ -55,7 +55,7 @@ func (dfa *DFA) newNode() *dfanode {
 	return &res
 }
 
-// DFAfromNFA - constructs new NFA with DFA
+// DFAfromNFA - constructs new DFA from NFA
 func DFAfromNFA(nfa *NFA) *DFA {
 	dfa := &DFA{
 		abc:   maps.Clone(nfa.abc),
@@ -111,7 +111,7 @@ func DFAfromNFA(nfa *NFA) *DFA {
 
 		for r := range dfa.abc {
 			nextCondSet := make(map[*nfanode]struct{})
-			endpoint := false 
+			endpoint := false
 
 			for _, nfafrom := range currCond {
 				for nfato := range nfafrom.next[r] {
@@ -151,7 +151,7 @@ func DFAfromNFA(nfa *NFA) *DFA {
 	return dfa
 }
 
-// Dump - dumps NFA into png
+// Dump - dumps DFA into png
 func (dfa DFA) Dump(filename string) {
 	g := graphviz.New()
 	graph, err := g.Graph(graphviz.StrictDirected)
@@ -228,5 +228,4 @@ func (dfa DFA) Dump(filename string) {
 	if err := g.RenderFilename(graph, graphviz.PNG, filename); err != nil {
 		log.Fatal(err)
 	}
-
 }

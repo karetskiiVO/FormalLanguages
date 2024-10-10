@@ -16,6 +16,10 @@ func main() {
 	aut.RemoveEmpty().Dump("./test/result1.png")
 	daut := fl.DFAfromNFA(aut)
 	daut.Dump("./test/result2.png")
+	fdaut := fl.CDFAfromDFA(daut)
+	fdaut.Dump("./test/result3.png")
+	mfdaut := fdaut.Minimise()
+	mfdaut.Dump("./test/result4.png")
 }
 
 func testConvert (str string) []fl.Token {

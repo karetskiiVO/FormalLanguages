@@ -11,7 +11,11 @@ func main() {
 	str, _ := bufio.NewReader(os.Stdin).ReadString('\n')
 
 	reg, _ := fl.RegExpFromTokens(testConvert(str))
-	fl.NFAFromRegExp(reg).Dump("./result.png")
+	aut := fl.NFAFromRegExp(reg)
+	aut.Dump("./result0.png")
+	aut.RemoveEmpty().Dump("./result1.png")
+	daut := fl.DFAfromNFA(aut)
+	daut.Dump("./result2.png")
 }
 
 func testConvert (str string) []fl.Token {

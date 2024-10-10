@@ -26,7 +26,7 @@ type regExpNodeEmptyRune struct{}
 func (regExpNodeEmptyRune) Priority() int       { return hightPriority }
 func (regExpNodeEmptyRune) ToString(int) string { return "1" }
 func (regExpNodeEmptyRune) ToSubNFA(nfa *NFA, begin, end *nfanode) {
-	begin.next[EmptyRune] = append(begin.next[EmptyRune], end)
+	begin.link(EmptyRune, end)
 }
 
 type regExpNodeRune struct {
@@ -36,7 +36,7 @@ type regExpNodeRune struct {
 func (regExpNodeRune) Priority() int         { return runePriority }
 func (r regExpNodeRune) ToString(int) string { return fmt.Sprintf("%c", r.r) }
 func (r regExpNodeRune) ToSubNFA(nfa *NFA, begin, end *nfanode) {
-	begin.next[r.r] = append(begin.next[r.r], end)
+	begin.link(r.r, end)
 }
 
 type regExpNodeAdd struct {
@@ -122,6 +122,6 @@ func (clini regExpNodeClini) ToString(priority int) string {
 	return fmt.Sprintf("%v*", clini.Next.ToString(prior))
 }
 func (clini regExpNodeClini) ToSubNFA(nfa *NFA, begin, end *nfanode) {
-	clini.Next.ToSubNFA(nfa, begin, end)
-	end.next[EmptyRune] = append(end.next[EmptyRune], begin)
+	clini.Next.ToSubNFA(nfa, begin, begin)
+	begin.link(EmptyRune, end)
 }

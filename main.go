@@ -12,10 +12,10 @@ func main() {
 
 	reg, _ := fl.RegExpFromTokens(testConvert(str))
 	aut := fl.NFAFromRegExp(reg)
-	aut.Dump("./result0.png")
-	aut.RemoveEmpty().Dump("./result1.png")
+	aut.Dump("./test/result0.png")
+	aut.RemoveEmpty().Dump("./test/result1.png")
 	daut := fl.DFAfromNFA(aut)
-	daut.Dump("./result2.png")
+	daut.Dump("./test/result2.png")
 }
 
 func testConvert (str string) []fl.Token {

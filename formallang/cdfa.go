@@ -94,7 +94,7 @@ func DFAfromCDFA(cdfa *CDFA) *DFA {
 }
 
 // Minimise constructs mdfa
-func (cdfa *CDFA) Minimise() *CDFA {
+func (cdfa CDFA) Minimise() *CDFA {
 	nodeClasses := make(map[*dfanode]string)
 	classesSet := make(map[string]int)
 
@@ -118,17 +118,18 @@ func (cdfa *CDFA) Minimise() *CDFA {
 		bufClassesSet := make(map[string]int)
 
 		cnt := 0
-		// вообще по другому
-		for node := range nodeClasses {
+		for from, fromclass := range nodeClasses {
 			newClassBuilder := &strings.Builder{}
+			
+			newClassBuilder.WriteString(fromclass)
 			for _, r := range alph {
-				next := node.next[r]
+				to := from.next[r]
 				newClassBuilder.WriteRune(',')
-				newClassBuilder.WriteString(nodeClasses[next])
+				newClassBuilder.WriteString(nodeClasses[to])
 			}
 
 			newClass := newClassBuilder.String()
-			
+
 			var classid int
 			if id, ok := bufClassesSet[newClass]; !ok {
 				bufClassesSet[newClass] = cnt
@@ -138,7 +139,7 @@ func (cdfa *CDFA) Minimise() *CDFA {
 				classid = id
 			}
 
-			bufNodeClasses[node] = fmt.Sprint(classid)
+			bufNodeClasses[from] = fmt.Sprint(classid)
 		}
 
 		if (len(bufClassesSet) == len(classesSet)) {

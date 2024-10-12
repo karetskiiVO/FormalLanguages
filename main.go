@@ -1,25 +1,14 @@
 package main
 
 import (
-	"bufio"
+	"fmt"
 	"os"
-	
+
 	fl "github.com/karetskiiVO/FormalLanguages/formallang"
 )
 
 func main() {
-	str, _ := bufio.NewReader(os.Stdin).ReadString('\n')
-
-	reg, _ := fl.RegExpFromTokens(testConvert(str))
-	aut := fl.NFAFromRegExp(reg)
-	aut.Dump("./test/result0.png")
-	aut.RemoveEmpty().Dump("./test/result1.png")
-	daut := fl.DFAfromNFA(aut)
-	daut.Dump("./test/result2.png")
-	fdaut := fl.CDFAfromDFA(daut)
-	fdaut.Dump("./test/result3.png")
-	mfdaut := fdaut.Minimise()
-	mfdaut.Dump("./test/result4.png")
+	makeTests()
 }
 
 func testConvert (str string) []fl.Token {
@@ -43,4 +32,31 @@ func testConvert (str string) []fl.Token {
 	}
 
 	return res
+}
+
+func makeTests () {
+	tests := []string{
+		"a", "a+b", "ab", "a+1", "(a+1)*", 
+		"(a(a+1) + b)*", "(a+b)*a(b+a)", "a((ba)*a(ab)* + a)*", 
+		"(a(ab + ba)*b(a + ba)*)(a(ab + ba)*b(a + ba)*)*",
+	}
+	
+	for idx, testregexp := range tests {
+		makeTest(testregexp, "test"+fmt.Sprint(idx))
+	}
+}
+
+func makeTest (regExp string, foldername string) {
+	os.Mkdir("./test/"+foldername, os.ModeDir)
+
+	reg, _ := fl.RegExpFromTokens(testConvert(regExp))
+	aut := fl.NFAFromRegExp(reg)
+	aut.Dump("./test/"+foldername+"/0_nfa.png")
+	aut.RemoveEmpty().Dump("./test/"+foldername+"/1_nfa_without_empty.png")
+	daut := fl.DFAfromNFA(aut)
+	daut.Dump("./test/"+foldername+"/2_dfa.png")
+	cdaut := fl.CDFAfromDFA(daut)
+	cdaut.Dump("./test/"+foldername+"/3_cdfa.png")
+	mfdaut := cdaut.Minimise()
+	mfdaut.Dump("./test/"+foldername+"/4_mcdfa.png")
 }

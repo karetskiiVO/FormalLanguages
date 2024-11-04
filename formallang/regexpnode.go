@@ -68,7 +68,11 @@ func (add regExpNodeAdd) ToString(priority int) string {
 }
 func (add regExpNodeAdd) ToSubNFA(nfa *NFA, begin, end *nfanode) {
 	for _, regexprnode := range add.Next {
-		regexprnode.ToSubNFA(nfa, begin, end)
+		bufBegin, bufEnd := nfa.newNode(), nfa.newNode()
+		regexprnode.ToSubNFA(nfa, bufBegin, bufEnd)
+		
+		begin.link(EmptyRune, bufBegin)
+		bufEnd.link(EmptyRune, end)
 	}
 }
 

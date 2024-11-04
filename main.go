@@ -13,5 +13,9 @@ func main() {
 
 	fmt.Scanf("%s %c %d", &pol, &r, &k)
 
-	
+	if fl.Solve7(pol, r, k) {
+		fmt.Println("YES")
+	} else {
+		fmt.Println("NO")
+	}
 }
